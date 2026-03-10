@@ -217,8 +217,9 @@ require("lazy").setup({
                 marksman = {},
                 pyright = {},
                 clangd = {},
+                rust_analyzer = {},
             }
-            local formatters = { "stylua", "isort", "black", "prettier" }
+            local formatters = { "stylua", "clang-format", "isort", "black", "prettier" }
             require("mason").setup()
             require("mason-tool-installer").setup({
                 ensure_installed = vim.tbl_flatten({ vim.tbl_keys(servers), formatters }),
@@ -290,6 +291,7 @@ require("lazy").setup({
                 "html",
                 "lua",
                 "luadoc",
+                "rust",
                 "markdown",
                 "markdown_inline",
                 "python",
