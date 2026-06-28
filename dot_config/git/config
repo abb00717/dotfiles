@@ -1,0 +1,16 @@
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[user]
+	name = abb00717
+	email = abb00717@gmail.com
+[diff]
+	tool = nvim
+[difftool]
+	prompt = false
+[difftool "nvim"]
+	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
+[init]
+	defaultBranch = main
