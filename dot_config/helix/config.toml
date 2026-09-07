@@ -17,7 +17,7 @@ gutters = ["diagnostics", "spacer", "line-numbers", "spacer"]
 end-of-line-diagnostics = "hint"
 
 [editor.cursor-shape]
-insert = "bar"
+insert = "block"
 normal = "block"
 select = "underline"
 
