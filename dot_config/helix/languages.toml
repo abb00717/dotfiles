@@ -1,0 +1,45 @@
+# Everything here is indented with four spaces and formatted so that an opening
+# brace stays on the line that opens it. Helix owns `indent` (what pressing tab
+# inserts); the formatter owns the file on disk, so both have to agree.
+#
+# Helix has no package manager. Every command below has to be on $PATH:
+#   ty, ruff        uv tool install ty ruff
+#   intelephense    npm install -g intelephense
+#   pretty-php      github.com/lkrms/pretty-php releases, dropped in ~/.local/bin
+#   clang-format    distro package, already present
+
+[[language]]
+name = "python"
+language-servers = ["ty", "ruff"]
+auto-format = true
+formatter = { command = "ruff", args = ["format", "-"] }
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "php"
+auto-format = true
+formatter = { command = "pretty-php", args = ["--one-true-brace-style", "-"] }
+indent = { tab-width = 4, unit = "    " }
+
+# clang-format reads .clang-format from the buffer's directory upwards, then
+# falls back to ~/.clang-format, which is where the 4-space/attached-brace
+# defaults live. A project that ships its own .clang-format wins, which is what
+# you want when the repo is not yours.
+
+[[language]]
+name = "c"
+auto-format = true
+formatter = { command = "clang-format", args = ["--assume-filename=x.c"] }
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "cpp"
+auto-format = true
+formatter = { command = "clang-format", args = ["--assume-filename=x.cpp"] }
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "javascript"
+auto-format = true
+formatter = { command = "js-beautify" }
+indent = { tab-width = 4, unit = "    " }

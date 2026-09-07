@@ -1,0 +1,43 @@
+theme = "alabaster"
+
+[editor]
+line-number = "relative"
+cursorline = true
+scrolloff = 10
+true-color = true
+color-modes = true
+
+# No git integration is wired up, so the diff gutter is left out. The branch
+# name still shows, via the version-control statusline element below.
+gutters = ["diagnostics", "spacer", "line-numbers", "spacer"]
+
+# Diagnostics are rendered inline rather than hidden behind a picker.
+# "hint" is the lowest severity, so the cursor line shows everything and other
+# lines are held back to errors to keep the buffer readable.
+end-of-line-diagnostics = "hint"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.inline-diagnostics]
+cursor-line = "hint"
+other-lines = "error"
+
+[editor.lsp]
+display-progress-messages = true
+display-inlay-hints = false
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "read-only-indicator", "file-modification-indicator"]
+right = ["version-control", "diagnostics", "selections", "position", "file-encoding", "file-type"]
+
+[editor.indent-guides]
+render = true
+
+[editor.file-picker]
+hidden = false
+
+[keys.normal]
+V = "select_line_above"
