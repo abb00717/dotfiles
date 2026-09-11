@@ -38,6 +38,14 @@ auto-format = true
 formatter = { command = "clang-format", args = ["--assume-filename=x.cpp"] }
 indent = { tab-width = 4, unit = "    " }
 
+# clangd only accepts --query-driver on the command line, never from a .clangd
+# file, so a cross-compiled project has no way to supply it itself. Without it
+# clangd cannot ask the cross-compiler where its own system headers live and
+# silently falls back to the host's, which leaves uint8_t undefined and every
+# file built on it reporting as errors.
+[language-server.clangd]
+args = ["--query-driver=/home/abb00717/.arduino15/packages/esp32/tools/**/bin/*-elf-g++"]
+
 [[language]]
 name = "javascript"
 auto-format = true
