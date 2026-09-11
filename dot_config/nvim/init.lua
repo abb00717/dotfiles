@@ -20,23 +20,31 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     -- UI
     {
-        "p00f/alabaster.nvim",
+        "ABB00717/alabaster.nvim",
+        -- dir = '~/Programming/Projects/alabaster.nvim',
         priority = 1000,
         config = function()
             vim.cmd("colorscheme alabaster")
-
-            local bg = "#efebe3"
-            vim.api.nvim_set_hl(0, "Normal", { bg = bg })
-            vim.api.nvim_set_hl(0, "NormalNC", { bg = bg })
-            vim.api.nvim_set_hl(0, "SignColumn", { bg = bg })
-            vim.api.nvim_set_hl(0, "LineNr", { bg = bg })
-            vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = bg })
-            vim.api.nvim_set_hl(0, "CursorLine", { bg = "#d8d8d8" })
         end,
     },
     {
-        "echasnovski/mini.statusline",
-        opts = { use_icons = vim.g.have_nerd_font },
+        "echasnovski/mini.indentscope",
+        config = function()
+            local indentscope = require("mini.indentscope")
+            indentscope.setup({
+                draw = { animation = indentscope.gen_animation.none() },
+                options = { try_as_border = true },
+            })
+
+            vim.api.nvim_set_hl(0, "MiniIndentscopeSymbol", { fg = "#a39c92" })
+
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = { "neo-tree", "help", "TelescopePrompt", "lazy", "mason", "checkhealth" },
+                callback = function()
+                    vim.b.miniindentscope_disable = true
+                end,
+            })
+        end,
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
@@ -50,8 +58,18 @@ require("lazy").setup({
         },
     },
     { "folke/which-key.nvim", event = "VimEnter", opts = { icons = { mappings = vim.g.have_nerd_font } } },
-
-    -- Telescope
+    {
+        "nvim-treesitter/nvim-treesitter-context",
+        config = function()
+            require("treesitter-context").setup({
+                enable = true,
+                line_numbers = false,
+                max_lines = -1,
+                trim_scope = "outer",
+                mode = "topline",
+            })
+        end,
+    },
     {
         "nvim-telescope/telescope.nvim",
         dependencies = {
@@ -61,23 +79,46 @@ require("lazy").setup({
             "nvim-tree/nvim-web-devicons",
         },
         config = function()
+            local actions = require("telescope.actions")
             require("telescope").setup({
+                defaults = {
+                    -- So "Search by Grep" won't look that messy
+                    path_display = { "filename_first" },
+                    dynamic_preview_title = true,
+                    layout_config = {
+                        horizontal = { preview_width = 0.70 },
+                    },
+                    mappings = {
+                        i = { ["<Esc>"] = actions.close },
+                    },
+                    vimgrep_arguments = {
+                        "rg",
+                        "--color=never",
+                        "--no-heading",
+                        "--with-filename",
+                        "--line-number",
+                        "--column",
+                        "--smart-case",
+                        "--trim",
+                    },
+                },
                 extensions = { ["ui-select"] = { require("telescope.themes").get_dropdown() } },
             })
             pcall(require("telescope").load_extension, "fzf")
             pcall(require("telescope").load_extension, "ui-select")
         end,
     },
-
-    -- LSP & Completion
     {
+        -- For auto completion
         "saghen/blink.cmp",
-        version = "v0.*",
+        version = "v1.*",
         dependencies = { "rafamadriz/friendly-snippets", "L3MON4D3/LuaSnip" },
         opts = {
             snippets = { preset = "luasnip" },
+            -- See :h blink-cmp-config-keymap for defining your own keymap
             keymap = { preset = "default" },
-            appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = "mono" },
+            appearance = { nerd_font_variant = "mono" },
+            completion = { documentation = { auto_show = true } }, -- Show the docs automatically
             signature = { enabled = true },
             sources = { default = { "lsp", "path", "snippets", "buffer" } },
         },
@@ -93,37 +134,30 @@ require("lazy").setup({
             "saghen/blink.cmp",
         },
         config = function()
-            local servers = {
-                lua_ls = {
-                    settings = {
-                        Lua = {
-                            completion = { callSnippet = "Replace" },
-                            format = { enable = true, default_config = { indent_style = "space", indent_size = "4" } },
-                        },
-                    },
-                },
-                marksman = {},
-                pyright = {},
-                clangd = {},
-                rust_analyzer = {},
-            }
-            local formatters = { "stylua", "clang-format", "isort", "black", "prettier" }
-            require("mason").setup()
+            -- Only a bootstrap list for a fresh machine. mason-lspconfig enables
+            -- every installed server on its own, so nothing has to be listed here
+            -- for it to start.
+            local servers = require("servers")
+            -- One per language. A second formatter claiming the same filetype only
+            -- adds another pass over the buffer, so the pick is made here rather
+            -- than left to whatever the registry happens to return first.
+            local formatters = require("formatters")
             require("mason-tool-installer").setup({
-                ensure_installed = vim.iter({ vim.tbl_keys(servers), formatters }):flatten():totable(),
+                ensure_installed = vim.iter({ servers, formatters }):flatten():totable(),
             })
+
+            vim.lsp.config("*", {
+                capabilities = require("blink.cmp").get_lsp_capabilities(nil, true),
+            })
+            -- Mason files stylua and rubocop under LSP as well as Formatter, so
+            -- automatic_enable would start them as a second client on every lua and
+            -- ruby buffer. conform already drives both through their CLI.
             require("mason-lspconfig").setup({
-                handlers = {
-                    function(server_name)
-                        local server = servers[server_name] or {}
-                        server.capabilities = require("blink.cmp").get_lsp_capabilities(server.capabilities)
-                        require("lspconfig")[server_name].setup(server)
-                    end,
-                },
+                automatic_enable = { exclude = { "stylua", "rubocop" } },
             })
             vim.diagnostic.config({
-                virtual_text = false,
-                signs = false,
+                virtual_text = true,
+                signs = true,
                 underline = false,
                 update_in_insert = false,
             })
@@ -134,31 +168,95 @@ require("lazy").setup({
             })
         end,
     },
+    { "williamboman/mason.nvim", opts = {} },
     {
         "stevearc/conform.nvim",
-        opts = {
-            format_on_save = function(bufnr)
-                if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-                    return
+        dependencies = { "williamboman/mason.nvim" },
+        opts = function()
+            -- Mason tags packages with display language names and its own package
+            -- names; conform keys off filetypes and its own builtin names. Neither
+            -- pair lines up by lowercasing alone.
+            local ft_alias = {
+                ["c++"] = "cpp",
+                ["c#"] = "cs",
+                jsx = "javascriptreact",
+                tsx = "typescriptreact",
+                assembly = "asm",
+                shell = "sh",
+                bash = "sh",
+                mksh = "sh",
+            }
+            local name_alias = {
+                ["sql-formatter"] = "sql_formatter",
+                ["nginx-config-formatter"] = "nginxfmt",
+            }
+
+            local by_ft = {}
+            for _, pkg in ipairs(require("mason-registry").get_installed_packages()) do
+                if vim.tbl_contains(pkg.spec.categories, "Formatter") then
+                    local name = name_alias[pkg.spec.name] or pkg.spec.name
+                    for _, lang in ipairs(pkg.spec.languages or {}) do
+                        local ft = lang:lower()
+                        ft = ft_alias[ft] or ft
+                        by_ft[ft] = by_ft[ft] or {}
+                        -- Several Mason languages collapse onto one filetype (Shell,
+                        -- Bash and Mksh are all sh), which would otherwise queue the
+                        -- same formatter for repeated passes over the buffer.
+                        if not vim.tbl_contains(by_ft[ft], name) then
+                            table.insert(by_ft[ft], name)
+                        end
+                    end
                 end
-                return { timeout_ms = 500, lsp_format = "fallback" }
-            end,
-            formatters_by_ft = { lua = { "stylua" }, python = { "isort", "black" }, markdown = { "prettier" } },
-            formatters = { stylua = { prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" } } },
-        },
+            end
+
+            -- The registry returns packages in no particular order, and clang-format
+            -- claims half the C family plus JSON and Java. Anything with a real
+            -- preference, or an order that matters, is pinned here.
+            by_ft = vim.tbl_extend("force", by_ft, {
+                python = { "isort", "black" },
+                javascript = { "standardjs" },
+                json = { "prettier" },
+                java = { "google-java-format" },
+            })
+
+            return {
+                format_on_save = function(bufnr)
+                    if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+                        return
+                    end
+                    return { timeout_ms = 500, lsp_format = "fallback" }
+                end,
+                formatters_by_ft = by_ft,
+                formatters = {
+                    stylua = { prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" } },
+                    ["pretty-php"] = { prepend_args = { "--one-true-brace-style" } },
+                    nginxfmt = {
+                        condition = function(_, ctx)
+                            local lines = vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false)
+                            return not vim.iter(lines):any(function(line)
+                                -- Filter non Nginx grammar *_by_lua_block by OpenResty
+                                return line:match("_by_lua_block%s*{") ~= nil
+                            end)
+                        end,
+                    },
+                },
+            }
+        end,
     },
     {
         "nvim-treesitter/nvim-treesitter",
+        -- The main branch needs Nvim 0.12 and replaces configs.setup: parsers are
+        -- installed imperatively, and highlighting is core's job via
+        -- vim.treesitter.start. Upstream does not support lazy-loading it.
         branch = "main",
+        lazy = false,
+        -- Parsers are pinned per plugin revision, so they must be rebuilt on update.
         build = ":TSUpdate",
-        opts = {
-            ensure_installed = { "bash", "c", "cpp", "html", "rust", "markdown", "python" },
-            auto_install = true,
-            highlight = { enable = true },
-            indent = { enable = true },
-        },
-        config = function(_, opts)
-            require("nvim-treesitter").setup(opts)
+        config = function()
+            local ts = require("nvim-treesitter")
+            ts.setup()
+            ts.install(require("parsers"))
+            require("ts_autoinstall").setup(ts)
         end,
     },
 
@@ -175,54 +273,17 @@ require("lazy").setup({
                 topdelete = { text = "‾" },
                 changedelete = { text = "~" },
             },
+            current_line_blame = true,
+            current_line_blame_opts = {
+                virt_text = true,
+                virt_text_pos = "right_align", -- 'eol' | 'overlay' | 'right_align'
+                delay = 0,
+                ignore_whitespace = true,
+                virt_text_priority = 100,
+                use_focus = true,
+            },
             on_attach = function(bufnr)
-                local gitsigns = require("gitsigns")
-
-                local function map(mode, l, r, opts)
-                    opts = opts or {}
-                    opts.buffer = bufnr
-                    vim.keymap.set(mode, l, r, opts)
-                end
-
-                -- Navigation
-                map("n", "]c", function()
-                    if vim.wo.diff then
-                        vim.cmd.normal({ "]c", bang = true })
-                    else
-                        gitsigns.nav_hunk("next")
-                    end
-                end, { desc = "Next Git Hunk" })
-
-                map("n", "[c", function()
-                    if vim.wo.diff then
-                        vim.cmd.normal({ "[c", bang = true })
-                    else
-                        gitsigns.nav_hunk("prev")
-                    end
-                end, { desc = "Previous Git Hunk" })
-
-                -- Actions
-                map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage Hunk" })
-                map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset Hunk" })
-                map("v", "<leader>hs", function()
-                    gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-                end, { desc = "Stage Hunk (Visual)" })
-                map("v", "<leader>hr", function()
-                    gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-                end, { desc = "Reset Hunk (Visual)" })
-                map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage Buffer" })
-                map("n", "<leader>hu", gitsigns.undo_stage_hunk, { desc = "Undo Staged Hunk" })
-                map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset Buffer" })
-                map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview Hunk" })
-                map("n", "<leader>hb", function()
-                    gitsigns.blame_line({ full = true })
-                end, { desc = "Blame Line" })
-                map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "Toggle Blame Line" })
-                map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diff This" })
-                map("n", "<leader>hD", function()
-                    gitsigns.diffthis("~")
-                end, { desc = "Diff This (~)" })
-                map("n", "<leader>td", gitsigns.toggle_deleted, { desc = "Toggle Deleted" })
+                require("keymaps").setup_gitsigns_keymaps(bufnr)
             end,
         },
     },
@@ -232,11 +293,6 @@ require("lazy").setup({
         config = function()
             require("diffview").setup({
                 enhanced_diff_hl = true,
-                hooks = {
-                    diff_buf_read = function(bufnr)
-                        vim.opt_local.foldenable = false
-                    end,
-                },
             })
         end,
     },

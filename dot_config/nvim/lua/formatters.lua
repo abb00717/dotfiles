@@ -1,0 +1,18 @@
+return {
+    "stylua",
+    "clang-format",
+    "isort",
+    "black",
+    "prettier",
+    "pretty-php",
+    "sql-formatter",
+    "standardjs",
+    "asmfmt",
+    "dockerfmt",
+    "gofumpt",
+    "google-java-format",
+    "nginx-config-formatter",
+    "rubocop",
+    "shfmt",
+    "xmlformatter",
+}

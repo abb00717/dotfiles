@@ -1,0 +1,53 @@
+alias v='nvim'
+alias py='python3.14'
+alias t-kst='tmux kill-session -t'
+alias t-at='tmux attach -t'
+alias t-p='tmux-project'
+alias t-n='tmux-note'
+alias c-e='chezmoi edit'
+alias c-av='chezmoi apply -v'
+alias tldrf='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
+alias pwn-college='ssh -i key hacker@dojo.pwn.college'
+alias ssh-rasp='ssh abb00717@abb00717-raspberry'
+alias vencord-terminal='sh -c "$(curl -sS https://vencord.dev/install.sh)"'
+alias ff="fzf --style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}'"
+alias nvidia-setting="nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings"
+alias yarn="yarn --use-yarnrc $XDG_CONFIG_HOME/yarn/config"
+
+# eza
+# alias ls='eza $eza_params'
+# alias l='eza --git-ignore $eza_params'
+# alias ll='eza --all --header --long $eza_params'
+# alias llm='eza --all --header --long --sort=modified $eza_params'
+# alias la='eza -lbhHigUmuSa'
+# alias lx='eza -lbhHigUmuSa@'
+# alias lt='eza --tree $eza_params'
+# alias tree='eza --tree $eza_params'
+
+# Metasploit
+alias pattern_create='/usr/share/metasploit-framework/tools/exploit/pattern_create.rb'
+alias pattern_offset='/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb'
+
+# git-cmp: Commit with message and Push
+# Usage: git-cmp "Your commit message here"
+git-cmp() {
+  if [ -z "$1" ]; then
+    echo "Error: Please provide a commit message."
+    echo "Usage: git-cmp \"Your commit message\""
+    return 1
+  fi
+
+  echo "Committing with message: \"$1\""
+  # Commit the changes using the first argument as the message
+  git commit -m "$1"
+
+  # Check if the commit was successful before pushing
+  if [ $? -eq 0 ]; then
+    echo "Commit successful. Pushing changes..."
+    # Push the changes to the remote repository
+    git push
+  else
+    echo "Commit failed. Aborting push."
+    return 1
+  fi
+}

@@ -1,7 +1,7 @@
 set disassembly-flavor intel
 
 # https://github.com/hugsy/gef
-# source /home/abb00717/.config/gdb/gdbinit-gef.py
+source /home/abb00717/.config/gdb/gdbinit-gef.py
 
 # $ gdb -q
 # (gdb) pi import urllib.request as u, tempfile as t; g=t.NamedTemporaryFile(suffix='-gef.py'); open(g.name, 'wb+').write(u.urlopen('https://tinyurl.com/gef-main').read()); gdb.execute('source %s' % g.name)
