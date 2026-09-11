@@ -1,7 +1,3 @@
-# Everything here is indented with four spaces and formatted so that an opening
-# brace stays on the line that opens it. Helix owns `indent` (what pressing tab
-# inserts); the formatter owns the file on disk, so both have to agree.
-#
 # Helix has no package manager. Every command below has to be on $PATH:
 #   ty, ruff        uv tool install ty ruff
 #   intelephense    npm install -g intelephense
@@ -20,11 +16,6 @@ name = "php"
 auto-format = true
 formatter = { command = "pretty-php", args = ["--one-true-brace-style", "-"] }
 indent = { tab-width = 4, unit = "    " }
-
-# clang-format reads .clang-format from the buffer's directory upwards, then
-# falls back to ~/.clang-format, which is where the 4-space/attached-brace
-# defaults live. A project that ships its own .clang-format wins, which is what
-# you want when the repo is not yours.
 
 [[language]]
 name = "c"
