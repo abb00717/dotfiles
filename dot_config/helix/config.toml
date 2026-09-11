@@ -2,6 +2,8 @@ theme = "alabaster"
 
 [editor]
 line-number = "relative"
+default-yank-register = '+'
+bufferline = "multiple"
 cursorline = true
 scrolloff = 10
 true-color = true
@@ -20,6 +22,9 @@ end-of-line-diagnostics = "hint"
 insert = "block"
 normal = "block"
 select = "underline"
+
+[editor.soft-wrap]
+enable = true
 
 [editor.inline-diagnostics]
 cursor-line = "hint"
