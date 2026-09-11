@@ -1,0 +1,152 @@
+# alabaster, light. Ported from ABB00717/alabaster.nvim.
+#
+# The scheme colours literals, comments and punctuation, and leaves every other
+# token plain black. Scopes that are deliberately left undefined below fall back
+# to ui.text, which is where that plainness comes from: adding a colour here is
+# a decision to make something stand out, not a default.
+
+# Syntax
+
+"comment" = "comment"
+"string" = "string"
+"constant" = "constant"
+"constant.character.escape" = "punct"
+"label" = "definition"
+"punctuation" = "punct"
+"operator" = "punct"
+
+# Markup
+#
+# Prose has no literals to colour, so the plain-black rule would leave a
+# markdown file completely flat, headings included. Structure carries the
+# colour here instead: headings take the literal purple, code spans the string
+# green, on the reasoning that a code span is a literal in prose.
+
+"markup.heading" = { fg = "constant", modifiers = ["bold"] }
+"markup.list" = "punct"
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "blue", modifiers = ["underlined"] }
+"markup.link.text" = "definition"
+"markup.link.label" = "definition"
+"markup.quote" = { fg = "grey", modifiers = ["italic"] }
+"markup.raw" = "string"
+
+"diff.plus" = "diff-add"
+"diff.minus" = "diff-delete"
+"diff.delta" = "diff-change"
+
+# Diagnostics
+#
+# The source range gets an undercurl only. The message text that Helix renders
+# inline is styled from the plain error/warning/info/hint keys further down, so
+# putting a background here would paint the code instead of the message.
+
+"diagnostic.error" = { underline = { color = "error", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "warning", style = "curl" } }
+"diagnostic.info" = { underline = { color = "info", style = "curl" } }
+"diagnostic.hint" = { underline = { color = "hint", style = "curl" } }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+"error" = "error"
+"warning" = "warning"
+"info" = "info"
+"hint" = "hint"
+
+# UI
+
+"ui.background" = { bg = "bg" }
+"ui.text" = { fg = "fg" }
+"ui.text.focus" = { fg = "blue", modifiers = ["bold"] }
+"ui.text.inactive" = { fg = "grey" }
+"ui.text.directory" = { fg = "blue" }
+
+"ui.cursor" = { fg = "cursor-fg", bg = "cursor-bg" }
+"ui.cursor.primary" = { fg = "cursor-fg", bg = "cursor-bg" }
+"ui.cursor.match" = { underline = { color = "active", style = "line" } }
+"ui.cursorline.primary" = { bg = "cursorline" }
+"ui.cursorcolumn.primary" = { bg = "column" }
+
+"ui.linenr" = { fg = "linenr" }
+"ui.linenr.selected" = { fg = "blue", modifiers = ["bold"] }
+"ui.gutter" = { bg = "bg" }
+
+"ui.selection" = { bg = "selection" }
+"ui.selection.primary" = { bg = "selection" }
+"ui.highlight" = { bg = "highlight" }
+
+"ui.statusline" = { fg = "fg", bg = "statusline" }
+"ui.statusline.inactive" = { fg = "grey-light", bg = "statusline" }
+"ui.statusline.normal" = { fg = "fg", bg = "statusline" }
+"ui.statusline.insert" = { fg = "green", bg = "statusline" }
+"ui.statusline.select" = { fg = "magenta", bg = "statusline" }
+"ui.bufferline" = { fg = "grey", bg = "statusline" }
+"ui.bufferline.active" = { fg = "blue", bg = "statusline" }
+"ui.bufferline.background" = { bg = "statusline" }
+
+"ui.popup" = { fg = "fg", bg = "float" }
+"ui.window" = { fg = "border" }
+"ui.help" = { fg = "fg", bg = "float" }
+"ui.menu" = { fg = "fg", bg = "float" }
+"ui.menu.selected" = { bg = "menu-sel" }
+"ui.menu.scroll" = { fg = "grey-dark", bg = "grey" }
+"ui.picker.header" = { fg = "yellow" }
+"ui.picker.header.column.active" = { fg = "blue", modifiers = ["bold"] }
+
+"ui.virtual.ruler" = { bg = "column" }
+"ui.virtual.whitespace" = { fg = "faint" }
+"ui.virtual.indent-guide" = { fg = "indent-guide" }
+"ui.virtual.inlay-hint" = { fg = "grey-light" }
+"ui.virtual.jump-label" = { fg = "comment", modifiers = ["bold"] }
+"ui.virtual.wrap" = { fg = "faint" }
+
+"ui.debug.breakpoint" = { bg = "mistake-bg" }
+"ui.debug.active" = { bg = "debug-pc" }
+
+[palette]
+bg = "#efebe3"
+fg = "#000000"
+
+comment = "#aa3731"
+string = "#448c27"
+constant = "#7a3e9d"
+definition = "#325cc0"
+punct = "#777777"
+
+blue = "#325cc0"
+green = "#448c27"
+magenta = "#7a3e9d"
+yellow = "#cb9000"
+active = "#ffbc5d"
+
+error = "#d13e23"
+warning = "#bc7500"
+info = "#278c00"
+hint = "#325cc0"
+mistake-bg = "#f8b28f"
+
+diff-add = "#284918"
+diff-delete = "#b40600"
+diff-change = "#ec8013"
+
+cursor-bg = "#007acc"
+cursor-fg = "#bfdbfe"
+cursorline = "#d8d8d8"
+column = "#e2eeee"
+selection = "#bfdbfe"
+highlight = "#dadada"
+
+statusline = "#c9c9c9"
+float = "#d8d8d8"
+menu-sel = "#c7c7c7"
+border = "#abbdc0"
+linenr = "#7d7c7c"
+indent-guide = "#a39c92"
+
+grey = "#777777"
+grey-light = "#9f9f9f"
+grey-dark = "#333333"
+faint = "#b6b6b6"
+debug-pc = "#c7c7ee"

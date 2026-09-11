@@ -1,9 +1,0 @@
-[user]
-	email = abb00717@gmail.com
-	name = abb00717
-[pull]
-	rebase = false
-[core]
-	editor = nvim
-[init]
-	defaultBranch = master
