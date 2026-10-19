@@ -12,3 +12,4 @@ set message-warning-color purple
 set message-breakpoint-color purple
 set prop-value-color blue
 set hexdump-special-color purple
+set message-system-color red
