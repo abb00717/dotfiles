@@ -229,7 +229,7 @@ if ! shopt -oq posix; then
     fi
 fi
 
-. "$HOME/.local/bin/env"
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 # Install Ruby Gems to ~/gems
 # No GEM_PATH: setting it drops the distro gem dirs, which is where
 # apt-installed gems (wpscan, nokogiri) live. Unset, RubyGems searches
@@ -258,21 +258,26 @@ export NVM_DIR="$XDG_DATA_HOME"/nvm
 # FZF
 export FZF_COMPLETION_DIR_OPTS='--walker dir,follow --walker-skip node_modules,.git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-eval "$(fzf --bash)"
+if command -v fzf >/dev/null; then
+    eval "$(fzf --bash)"
 
-# fzf's Ctrl-R only searches the in-memory history list, which this pane last
-# refreshed at its previous prompt. If another pane wrote a command since
-# then, it won't show up here yet. Re-sync from HISTFILE right before fzf
-# opens, so Ctrl-R always reflects every pane's history, not just this one's.
-# Vi mode's Ctrl-R (bound above to \C-z\C-r\C-z) hands off to this same
-# emacs-standard binding, so overriding it here covers both keymaps.
-bind -m emacs-standard '"\C-r": "\C-e \C-u\C-y\ey\C-u`sync_history; __fzf_history__`\e\C-e\C-\e("'
+    # fzf's Ctrl-R only searches the in-memory history list, which this pane last
+    # refreshed at its previous prompt. If another pane wrote a command since
+    # then, it won't show up here yet. Re-sync from HISTFILE right before fzf
+    # opens, so Ctrl-R always reflects every pane's history, not just this one's.
+    # Vi mode's Ctrl-R (bound above to \C-z\C-r\C-z) hands off to this same
+    # emacs-standard binding, so overriding it here covers both keymaps.
+    bind -m emacs-standard '"\C-r": "\C-e \C-u\C-y\ey\C-u`sync_history; __fzf_history__`\e\C-e\C-\e("'
+fi
 
 # opencode
-export PATH=/home/abb00717/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # Path for Go binary
-export PATH=/home/abb00717/.local/share/go/bin/:$PATH
+export PATH="$HOME/.local/share/go/bin/:$PATH"
 
 # Nodejs
-eval "$(fnm env --use-on-cd --shell bash)"
+command -v fnm >/dev/null && eval "$(fnm env --use-on-cd --shell bash)"
+
+# Per-machine additions (conda, rbenv, target IPs). Not managed by chezmoi.
+[ -f "$HOME/.bashrc.local" ] && . "$HOME/.bashrc.local"
