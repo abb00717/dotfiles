@@ -1,0 +1,11 @@
+# Third-party Claude Code skills. chezmoi clones them on first apply and
+# runs git pull once refreshPeriod has passed.
+[".claude/skills/speak-human-tw"]
+    type = "git-repo"
+    url = "https://github.com/Raymondhou0917/speak-human-tw.git"
+    refreshPeriod = "168h"
+
+[".claude/skills/character-background-generator-skill"]
+    type = "git-repo"
+    url = "https://github.com/shing-li/character-background-generator-skill.git"
+    refreshPeriod = "168h"
