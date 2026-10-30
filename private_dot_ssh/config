@@ -1,0 +1,19 @@
+# Host abb00717-raspberry ssh.abb00717.com
+Host ssh.abb00717.com
+    HostName ssh.abb00717.com
+    User abb00717
+
+    # Hardcode the hostname instead of %h. The desktop app resolves this
+    # config with its own SSH client, which need not expand ssh(1) tokens.
+    ProxyCommand /usr/local/bin/cloudflared access ssh --hostname ssh.abb00717.com
+
+    # Reuse one cloudflared tunnel across sessions. Without this every ssh
+    # invocation pays a fresh cloudflared startup plus two handshakes.
+    ControlMaster auto
+    ControlPath ~/.ssh/cm/%r@%h:%p
+    ControlPersist 10m
+
+    # The tunnel drops idle connections, leaving a live socket over a dead
+    # link. Detect it here instead of hanging until TCP timeout.
+    ServerAliveInterval 30
+    ServerAliveCountMax 3

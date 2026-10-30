@@ -1,0 +1,3 @@
+set editing-mode vi
+# Bind Ctrl+X followed by a to alias-expand-line
+"\e\C-a": alias-expand-line
