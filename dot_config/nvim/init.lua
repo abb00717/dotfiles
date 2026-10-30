@@ -53,6 +53,7 @@ require("lazy").setup({
         opts = {
             filesystem = {
                 window = { position = "current" },
+                follow_current_file = { enabled = true },
                 mappings = { ["\\"] = "close_window" },
             },
         },
@@ -107,6 +108,20 @@ require("lazy").setup({
             pcall(require("telescope").load_extension, "fzf")
             pcall(require("telescope").load_extension, "ui-select")
         end,
+    },
+    {
+        "folke/flash.nvim",
+        opts = {},
+        keys = {
+            {
+                "s",
+                mode = { "n", "x", "o" },
+                function()
+                    require("flash").jump()
+                end,
+                desc = "Flash",
+            },
+        },
     },
     {
         -- For auto completion
@@ -224,7 +239,9 @@ require("lazy").setup({
                     if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
                         return
                     end
-                    return { timeout_ms = 500, lsp_format = "fallback" }
+                    -- standardjs boots all of eslint per run, ~500ms before it touches
+                    -- the buffer.
+                    return { timeout_ms = 2000, lsp_format = "fallback" }
                 end,
                 formatters_by_ft = by_ft,
                 formatters = {
