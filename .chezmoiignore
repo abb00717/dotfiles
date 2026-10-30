@@ -1,8 +1,6 @@
 README.md
 
 {{- if eq .chezmoi.arch "arm64" }}
-# Raspberry Pi: headless, and its CLAUDE.md carries a learning-mode preamble
-# the other machines do not have.
+# Raspberry Pi runs headless.
 .config/kitty
-.claude/CLAUDE.md
 {{- end }}
