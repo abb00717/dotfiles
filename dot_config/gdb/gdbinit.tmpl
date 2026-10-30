@@ -1,0 +1,34 @@
+set disassembly-flavor intel
+{{- $pwndbg := joinPath .chezmoi.homeDir ".local/share/pwndbg/gdbinit.py" }}
+{{- if stat $pwndbg }}
+
+# https://github.com/pwndbg/pwndbg
+source {{ $pwndbg }}
+
+# Light background theme. Defaults use yellow and white, which wash out on white.
+set syntax-highlight-style default
+set memory-stack-color green
+set message-info-color none
+set message-hint-color blue
+set message-warning-color purple
+set message-breakpoint-color purple
+set prop-value-color blue
+set hexdump-special-color purple
+set message-system-color red
+{{- else }}
+
+# https://github.com/hugsy/gef
+source {{ .chezmoi.homeDir }}/.config/gdb/gdbinit-gef.py
+
+# $ gdb -q
+# (gdb) pi import urllib.request as u, tempfile as t; g=t.NamedTemporaryFile(suffix='-gef.py'); open(g.name, 'wb+').write(u.urlopen('https://tinyurl.com/gef-main').read()); gdb.execute('source %s' % g.name)
+define gef-load
+    python
+import gdb
+import urllib.request as u, tempfile as t
+g = t.NamedTemporaryFile(suffix='-gef.py')
+open(g.name, 'wb+').write(u.urlopen('https://tinyurl.com/gef-main').read())
+gdb.execute('source %s' %g.name)
+    end
+end
+{{- end }}
