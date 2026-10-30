@@ -14,9 +14,19 @@
 	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
 [init]
 	defaultBranch = main
+[pull]
+	rebase = false
+{{- with lookPath "gh" }}
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper =
+	helper = !{{ . }} auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper =
+	helper = !{{ . }} auth git-credential
+{{- else }}
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+{{- end }}
+# Per-machine settings such as safe.directory. Git skips it when missing.
+[include]
+	path = local
